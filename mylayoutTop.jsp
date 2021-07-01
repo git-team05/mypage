@@ -26,6 +26,7 @@
 			<% if(session.getAttribute("memId") == null) {%>
 				<a href="/team05/main/loginForm.jsp" > 로그인 </a>
 			<%}else{ %>
+				<%=session.getAttribute("memId") %> 님 환영합니다.
 				<a href="/team05/main/logout.jsp" > 로그아웃 </a>
 			<%} %>
 		</td>

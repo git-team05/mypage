@@ -16,6 +16,7 @@
 		<p> <a href="/team05/mypage/mymodifyForm.jsp"> 내정보수정 </a>
 		<p> <a href="/team05/mypage/myreview.jsp"> 작성한리뷰관리 </a>
 		<p> <a href="/team05/mypage/pwchangeForm.jsp"> 비밀번호변경 </a>
+		<p> <a href="/team05/mypage/mydeleteForm.jsp"> 회원탈퇴 </a>
 		<p> 관심공구관리 </p>
 		<p> <a href="/team05/mypage/mywish.jsp"> 찜한상품 </a>
 		<p> <a href="/team05/mypage/myalarm.jsp"> 오픈예정공구알림 </a>
