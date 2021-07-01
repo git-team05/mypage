@@ -131,5 +131,40 @@ public class MemberDAO {
     	  }
     	  return result;
       }
+      // g회원 탈퇴 메서드
+      public int deleteMember(String id, String pw) {
+    	  int result = -1;
+    	  Connection conn = null;
+    	  PreparedStatement pstmt = null;
+    	  ResultSet rs = null;
+    	  
+    	  try {
+    		  conn = getConnection();
+    		  String sql = "select pw from member where id=?";
+    		  pstmt = conn.prepareStatement(sql);
+    		  pstmt.setString(1, id);
+    		  
+    		  rs=pstmt.executeQuery();
+    		  if(rs.next()) {
+    			  String dbpw = rs.getString("pw");
+    			  if(dbpw.equals(pw)) {
+    				  sql = "delete from member where id=?";
+    				  pstmt = conn.prepareStatement(sql);
+    				  pstmt.setString(1, id);
+    				  result = pstmt.executeUpdate();
+    			  }else {
+    				  result = 0;
+    			  }
+    		  }
+    	  } catch (Exception e) {
+    		  e.printStackTrace();
+    	  } finally {
+    		  if(rs != null) try {rs.close();} catch (Exception e) {e.printStackTrace();}
+  			  if(pstmt != null) try {pstmt.close();} catch (Exception e) {e.printStackTrace();}
+  			  if(conn != null) try {conn.close();} catch (Exception e) {e.printStackTrace();}
+    	  }
+    	  System.out.println("dao delete result :" + result);
+    	  return result;
+      }
       
 }
