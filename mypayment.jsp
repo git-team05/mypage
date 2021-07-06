@@ -54,6 +54,7 @@
 		<%}else if(count > 0){ %>
 			<table>
 				<tr>
+					<td></td>
 					<td>주문번호</td>
 					<td>상품명</td>
 					<td>결제 금액</td>
@@ -63,10 +64,15 @@
 					MypaymentDTO mypay = (MypaymentDTO)myList.get(i);
 				%>
 					<tr>
+						<td>
+							<a href="/team05/product/productContent.jsp?">
+							<img src="/team05/imgs/<%=mypay.getThumbImg() %>" /> </a>
+						</td>
 						<td><%=mypay.getOrderNum() %></td>
 						<td><%=mypay.getProNum()%></td>
 						<td><%=mypay.getOrderTotal()%></td>
-						<td> <button>주문조회</button></td>
+						<td> <input type="button" value="주문조회" onclick="window.open('myorderCheck.jsp?orderNum=<%=mypay.getOrderNum() %>','주문조회','width=400px, height=500px')"></td>
+						<%-- <td> <button onclick="window.location='myorderCheck.jsp?orderNum=<%=mypay.getOrderNum() %>'">주문조회</td>  --%>
 					</tr>
 				<% } %>	
 			</table>	

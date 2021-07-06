@@ -161,7 +161,48 @@ public class ProductorderDAO {
 	         return payList;
 	      }
 		
-		
+		// orderNum 받아서 해당 주문 상세 정보 띄워주기.
+	    public ProductorderDTO getmyorderCheck(int orderNum) {
+	    	Connection conn = null;
+	    	PreparedStatement pstmt = null;
+	    	ResultSet rs = null;
+	    	ProductorderDTO myorderCheck = null;
+	    	 
+	    	try {
+	    		conn = getConnection();
+	    		String sql = "select * from productorder where ordernum=?";
+	    		pstmt = conn.prepareStatement(sql);
+	    		pstmt.setInt(1, orderNum);
+	    		rs = pstmt.executeQuery();
+	    		
+	    		if(rs.next()) {
+	    			myorderCheck = new ProductorderDTO();
+	    			myorderCheck.setOrderNum(orderNum);
+	    			myorderCheck.setProNum(rs.getInt("proNum"));
+	    			myorderCheck.setQuantity(rs.getInt("quantity"));
+	    			myorderCheck.setOrderTotal(rs.getInt("orderTotal"));
+	    			myorderCheck.setId(rs.getString("id"));
+	    			myorderCheck.setReceiver(rs.getString("receiver"));
+	    			myorderCheck.setRecZipcode(rs.getString("recZipcode"));
+	    			myorderCheck.setRecAddress(rs.getString("recAddress"));
+	    			myorderCheck.setRecAddressDetail(rs.getString("recAddressDetail"));
+	    			myorderCheck.setRecPhone(rs.getString("recPhone"));
+	    			myorderCheck.setRecEmail(rs.getString("recEmail"));
+	    			myorderCheck.setDelCon(rs.getString("delCon"));
+	    			myorderCheck.setPayCon(rs.getString("payCon"));
+	    			myorderCheck.setReg(rs.getTimestamp("reg"));
+
+	    		}
+	    	} catch (Exception e) {
+	    		e.printStackTrace();
+	    	} finally {
+	    		if(rs != null) try {rs.close();} catch (Exception e) {e.printStackTrace();}
+				if(pstmt != null) try {pstmt.close();} catch (Exception e) {e.printStackTrace();}
+				if(conn != null) try {conn.close();} catch (Exception e) {e.printStackTrace();}	
+	    	}
+	    	
+	    	return myorderCheck;
+	    }
 		
 		
 		
