@@ -49,7 +49,8 @@
 			</table>
 		<%}else if(count >0) { %>
 			<table>
-				<tr>
+				<tr>	
+					<td> </td>
 					<td> 일련번호</td>
 					<td> 판매상태</td>
 					<td> 상품번호</td>
@@ -59,11 +60,13 @@
 					JjimDTO mywish = (JjimDTO)mywishList.get(i);
 				%>
 					<tr>
+						<td>
+							
+						</td>
 						<td><%= mywish.getNum() %></td>
 						<td><%= mywish.getType() %></td>
 						<td><%= mywish.getPronum() %></td>
-						
-						
+						<td><button onclick="window.location='/team05/product/productContent.jsp?pronum=<%=mywish.getPronum()%>'">공구참여</button></td>
 					</tr>
 				<% } %>
 			</table>	

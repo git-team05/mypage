@@ -76,15 +76,6 @@
 					</tr>
 				<% } %>	
 			</table>	
-			<tr>
-				<td>결제완료</td>
-			</tr>
-			<tr>
-				<td>배송중</td>
-			</tr>
-			<tr>
-				<td>배송완료</td>
-			</tr>
 	</div>
 <% } %>		
 </body>
