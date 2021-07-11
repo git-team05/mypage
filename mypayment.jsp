@@ -69,9 +69,9 @@
 							<img src="/team05/imgs/<%=mypay.getThumbImg() %>" /> </a>
 						</td>
 						<td><%=mypay.getOrderNum() %></td>
-						<td><%=mypay.getProNum()%></td>
+						<td><%=mypay.getProName()%></td>
 						<td><%=mypay.getOrderTotal()%></td>
-						<td> <input type="button" value="주문조회" onclick="window.open('myorderCheck.jsp?orderNum=<%=mypay.getOrderNum() %>','주문조회','width=400px, height=500px')"></td>
+						<td> <input type="button" value="주문조회" onclick="window.open('myorderCheck.jsp?orderNum=<%=mypay.getOrderNum() %>','주문조회','width=500px, height=600px')"></td>
 						<%-- <td> <button onclick="window.location='myorderCheck.jsp?orderNum=<%=mypay.getOrderNum() %>'">주문조회</td>  --%>
 					</tr>
 				<% } %>	
