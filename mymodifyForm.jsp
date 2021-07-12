@@ -7,6 +7,23 @@
 <head>
 <meta charset="UTF-8">
 <title>mymodifyForm</title>
+	<script>
+		function check () {
+			var inputs = document.inputForm;
+			if(!inputs.pw.value) {
+				alert("비밀번호를 입력하세요");
+				return false;
+			}
+			if(!inputs.pwCh.value) {
+				alert("비밀번호 확인란을 입력하세요");
+				return false;
+			}
+			if (inputs.pw.value !=inputs.pwCh.value) {
+				alert("비밀번호를 동일하게 입력하세요.");
+				return false;
+			}
+		}
+	</script>
 </head>
 <%
 	String id = (String)session.getAttribute("memId");
@@ -17,7 +34,7 @@
 <body>
 	<tr>
 		<td colspan="2">
-			<jsp:include page="mylayoutTop.jsp"></jsp:include>
+			<jsp:include page="layoutTop.jsp"></jsp:include>
 		</td>
 	</tr>
 	<tr>
@@ -28,7 +45,7 @@
 	<br/>
 	<h1 align="center"> 회원 정보 수정</h1>
 	
-	<form action="mymodifyPro.jsp" method ="post" > 
+	<form action="mymodifyPro.jsp" method ="post" name="inputForm" onsubmit="return check()" > 
 	<table>
 		<tr>
             <td>아이디</td>
@@ -73,6 +90,7 @@
 				<input type = "button" value = "취소" onclick="window.location='/team05/mypage/myMain.jsp'"/>
 			</td>
          </tr>
-	</table>         
+	</table> 
+	</form>        
 </body>
 </html>

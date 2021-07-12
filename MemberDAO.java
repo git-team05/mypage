@@ -20,7 +20,7 @@ public class MemberDAO {
          DataSource ds = (DataSource)env.lookup("jdbc/orcl");
          return ds.getConnection();
       }
-      
+      // 회원가입메서드
       public void insertMember(MemberDTO dto) {
          Connection conn = null;
          PreparedStatement pstmt = null;
@@ -48,29 +48,36 @@ public class MemberDAO {
       } 
       // id,pw 일치 메서드
       // 멤버 회원 ID, PW 일치확인
-      public boolean idPwCheck(String id, String pw) {
-    	  boolean result = false;
-    	  Connection conn = null;
-          PreparedStatement pstmt = null;
-          ResultSet rs = null;
-    	  
+      // 로그인 아이디 값 일치
+      public boolean idPwCheck(String id, String pw, String kinds) {
+      	boolean result = false; 
+    	  	Connection conn = null; 
+          PreparedStatement pstmt = null; 
+          ResultSet rs = null; 
+    	  	String sql = null; 
+    	  	
     	  try {
-    		  conn = getConnection();
-    		  String sql = "select * from member where id=? and pw=?";
-    		  pstmt = conn.prepareStatement(sql);
-    		  pstmt. setString(1, id);
-    		  pstmt. setString(2, pw);
+    		  conn = getConnection(); 
+  	  		  if(kinds.equals("member")) { 
+  	  			sql = "select * from member where id=? and pw=?"; 
+  	  		  } else if(kinds.equals("seller")) {
+  	  			sql = "select * from seller where id=? and pw=?";
+  	  		  };
     		  
-    		  rs = pstmt.executeQuery();
-    		  if(rs.next()) {
-    			  result = true;
-    		  }
+    		  pstmt = conn.prepareStatement(sql); 
+    		  pstmt. setString(1, id); 
+    		  pstmt. setString(2, pw); 
+    		 
+    		  rs = pstmt.executeQuery();  
+  	  		  if(rs.next()) { 
+  	  			  result = true; 
+  	  		  }  		  		  
     	  }catch(Exception e) {
     		  e.printStackTrace();
     	  }finally {
     		  if(rs != null) try {rs.close();} catch(Exception e) {e.printStackTrace();}
     		  if(pstmt != null) try {pstmt.close();} catch(Exception e) {e.printStackTrace();}
-              if(conn != null) try {conn.close();} catch(Exception e) {e.printStackTrace();}
+            if(conn != null) try {conn.close();} catch(Exception e) {e.printStackTrace();}
     	  }
     	  return result; 
       }
@@ -164,6 +171,27 @@ public class MemberDAO {
   			  if(conn != null) try {conn.close();} catch (Exception e) {e.printStackTrace();}
     	  }
     	  System.out.println("dao delete result :" + result);
+    	  return result;
+      }
+      // pw 수정 메서드
+      public int updatePw(String id, String pw) {
+    	  Connection conn = null;
+    	  PreparedStatement pstmt = null;
+    	  int result = -1;
+    	  try {
+    		  conn = getConnection();
+    		  String sql = "update member set pw=? where id=?";
+    		  pstmt = conn.prepareStatement(sql);
+    		  pstmt.setString(1, pw);
+    		  pstmt.setString(2, id);
+    		  result = pstmt.executeUpdate();
+    		  System.out.println("dao update result :" + result);
+    	  } catch ( Exception e) {
+    		  e.printStackTrace();
+    	  } finally {
+    		  if(pstmt != null) try {pstmt.close();} catch (Exception e) {e.printStackTrace();}
+  			  if(conn != null) try {conn.close();} catch (Exception e) {e.printStackTrace();}
+    	  }
     	  return result;
       }
       

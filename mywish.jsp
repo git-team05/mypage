@@ -17,9 +17,9 @@
 	System.out.println(id);
 	int count = dao.JjimCount(id); 
 	
-	List mywishList = null;
+	List mywishList = null; 
 	if(count >0) {
-		mywishList = dao.getMywish(id); 
+		mywishList = dao.getMywish(id);
 		System.out.println("count : " + count );
 	}
 %>
@@ -27,7 +27,7 @@
 	<div>
 		<tr>
 			<td colspan="2">
-				<jsp:include page="mylayoutTop.jsp"></jsp:include>
+				<jsp:include page="layoutTop.jsp"></jsp:include>
 			</td>
 		</tr>
 	</div>

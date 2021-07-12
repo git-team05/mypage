@@ -107,7 +107,7 @@
 	// 작성 가능한 리뷰 내역 보여주기
 	if(count1 >0) {
 		myReviewList = dao.getMyreview1(id);
-		System.out.println("count :" + count1);
+		System.out.println("count1 :" + count1);
 	}
 	
 	// 작성한 리뷰 count
@@ -116,7 +116,7 @@
 	// 작성한 리뷰 내역 보여주기
 	if(count2 >0) {
 		myReviewList2 = dao.getMyreview2(id);
-		System.out.println("count :" + count2);
+		System.out.println("count2 :" + count2);
 	}
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm:ss");

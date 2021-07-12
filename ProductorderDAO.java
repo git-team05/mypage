@@ -99,7 +99,7 @@ public class ProductorderDAO {
 			System.out.println(id);
 			try {
 				conn = getConnection();
-				String sql = "select count(*) from productorder where id=?";
+				String sql = "select count(*) from productorder where id=? and paycon='finish'";
 				pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, id);
 				rs = pstmt.executeQuery();
@@ -126,7 +126,7 @@ public class ProductorderDAO {
 	         try {
 	            conn = getConnection();
 	            String sql = "select o.*, p.proname, p.thumbimg from product p, productorder o "
-	            		+ "where p.pronum = o.pronum and id=? and o.delcon != 'cancel' and o.paycon!= 'cancel' "
+	            		+ "where p.pronum = o.pronum and id=? and o.delcon = 'delSoon' and o.paycon = 'finish' "
 	            		+ "order by o.ordernum desc";
 	            pstmt = conn.prepareStatement(sql);
 	            pstmt.setString(1, id);
@@ -217,7 +217,7 @@ public class ProductorderDAO {
 	         
 	         try {
 	            conn = getConnection();
-	            String sql = "update productorder set delcon='cancel', paycon='cancel' where ordernum=?";
+	            String sql = "update productorder set paycon='cancel' where ordernum=?";
 	            pstmt = conn.prepareStatement(sql);
 	            pstmt.setInt(1, orderNum);
 	            result = pstmt.executeUpdate();
@@ -306,12 +306,255 @@ public class ProductorderDAO {
 	         }
 	         return mycancelList;
 	    }
-	    
+	 // 상품이름 가져오는 메소드
+	 		public String getProName(int proNum) {
+	 			Connection conn = null;
+	 			PreparedStatement pstmt = null;
+	 			ResultSet rs = null;
+	 			String proName = null;
+	 			
+	 			try {
+	 				conn = getConnection();
+	 				String sql = "select * from product where proNum=?";
+	 				pstmt = conn.prepareStatement(sql);
+	 				pstmt.setInt(1, proNum);
+	 				rs = pstmt.executeQuery();
+	 				if(rs.next()) {
+	 					proName = rs.getString(1);
+	 				}
+	 				
+	 			} catch (Exception e) {
+	 				e.printStackTrace();
+	 			} finally {
+	 				if(rs != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 				if(pstmt != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 				if(conn != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 			}
+	 			
+	 			return proName;
+	 		}
+	 		
+		// 나의 주문중 배송중 인것의 수  paycon='finish' & delcon='shipping' count 메서드
+		public int getMyshippingCount(String id) {
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			int result = 0;
+			System.out.println("shipping id : " + id);
+			
+			try {
+				conn = getConnection();
+				String sql = "select count(*) from productorder where id=? and paycon='finish' and delcon='delivery'";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					result = rs.getInt(1);
+					System.out.println("shipping result :" + result);
+				} 
+			}catch(Exception e) {
+					e.printStackTrace();
+			} finally {
+				if(rs != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 			if(pstmt != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 			if(conn != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+			}
+			return result;
+		}
+		// 배송중 리스트		 
+		public List getMyshipping(String id) {
+			Connection conn = null;
+			PreparedStatement pstmt =null;
+			ResultSet rs = null;
+			List shippingList = null;
+			
+			try {
+				conn = getConnection();
+				String sql = "select o.*, p.proname, p.thumbimg from product p, productorder o "
+	            		+ "where p.pronum = o.pronum and id=? and o.delcon = 'delivery' and o.paycon = 'finish' "
+	            		+ "order by o.ordernum desc";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					shippingList = new ArrayList();
+					do {
+						MypaymentDTO dto = new MypaymentDTO();
+						 dto.setOrderNum(rs.getInt("orderNum"));
+		                  dto.setProNum(rs.getInt("proNum"));
+		                  dto.setQuantity(rs.getInt("quantity"));
+		                  dto.setOrderTotal(rs.getInt("orderTotal"));
+		                  dto.setId(rs.getString("id"));
+		                  dto.setReceiver(rs.getString("receiver"));
+		                  dto.setRecZipcode(rs.getString("recZipcode"));
+		                  dto.setRecAddress(rs.getString("recAddress"));
+		                  dto.setRecAddressDetail(rs.getString("recAddressDetail"));
+		                  dto.setRecPhone(rs.getString("recPhone"));
+		                  dto.setRecEmail(rs.getString("recEmail"));
+		                  dto.setDelCon(rs.getString("delCon"));
+		                  dto.setPayCon(rs.getString("payCon"));
+		                  dto.setReg(rs.getTimestamp("reg"));
+		                  dto.setProName(rs.getString("proName"));
+		                  dto.setThumbImg(rs.getString("thumbImg"));
+		                  shippingList.add(dto);
+					} while(rs.next());
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				if(rs != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 			if(pstmt != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 			if(conn != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+			}
+			return shippingList;
+		}
+		// 내 주문중 배송완료 갯수 count   
+		public int getMyshipsentCount(String id) {
+			Connection conn = null;
+			PreparedStatement pstmt =null;
+			ResultSet rs = null;
+			int result = 0;
+			System.out.println("shipsent id:" + id);
+			
+			try {
+				conn = getConnection();
+				String sql = "select count(*) from productorder "
+						+ "where id=? and paycon ='finish' and delcon='delFinish'";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					result = rs.getInt(1);
+					System.out.println("shipsent result : " + result);
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+			}finally {
+				if(rs != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 			if(pstmt != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 			if(conn != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+			}
+			return result;
+		} 
+		// 배송완료 리스트
+		public List getMyshipsent(String id) {
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs =null;
+			List shipsentList = null;
+			try {
+				conn = getConnection();
+				String sql = "select o.*, p.proname, p.thumbimg from product p, productorder o "
+	            		+ "where p.pronum = o.pronum and id=? and o.delcon = 'delFinish' and o.paycon = 'finish' "
+	            		+ "order by o.ordernum desc";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					shipsentList = new ArrayList();
+					do {
+						MypaymentDTO dto = new MypaymentDTO();
+						dto.setOrderNum(rs.getInt("orderNum"));
+		                  dto.setProNum(rs.getInt("proNum"));
+		                  dto.setQuantity(rs.getInt("quantity"));
+		                  dto.setOrderTotal(rs.getInt("orderTotal"));
+		                  dto.setId(rs.getString("id"));
+		                  dto.setReceiver(rs.getString("receiver"));
+		                  dto.setRecZipcode(rs.getString("recZipcode"));
+		                  dto.setRecAddress(rs.getString("recAddress"));
+		                  dto.setRecAddressDetail(rs.getString("recAddressDetail"));
+		                  dto.setRecPhone(rs.getString("recPhone"));
+		                  dto.setRecEmail(rs.getString("recEmail"));
+		                  dto.setDelCon(rs.getString("delCon"));
+		                  dto.setPayCon(rs.getString("payCon"));
+		                  dto.setReg(rs.getTimestamp("reg"));
+		                  dto.setProName(rs.getString("proName"));
+		                  dto.setThumbImg(rs.getString("thumbImg"));
+		                  shipsentList.add(dto);
+					} while(rs.next());
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				if(rs != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 			if(pstmt != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 			if(conn != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+			}
+ 			return shipsentList;
+		}
+		// 환불내역 count
+		public int getMyrefundCount(String id) {
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			int result = 0;
+			
+			try {
+				conn =getConnection();
+				String sql = "select count(*) from productorder where id=? and paycon ='refund'";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					result = rs.getInt(1);
+					System.out.println("refund result :" + result);
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				if(rs != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 			if(pstmt != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 			if(conn != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+			}
+			return result;
+		}
 		
-		
-		
-		
-		
+		// 환불 내역 LISt
+		public List getMyrefund(String id) {
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			List myrefundList = null;
+			try {
+				conn = getConnection();
+				String sql = "select o.*, p.proname, p.thumbimg from product p, productorder o "
+	            		+ "where p.pronum = o.pronum and id=? and o.delcon = 'delFinish' and o.paycon = 'refund' "
+	            		+ "order by o.ordernum desc";
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, id);
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					myrefundList = new ArrayList();
+					do {
+						MypaymentDTO dto = new MypaymentDTO();
+						dto.setOrderNum(rs.getInt("orderNum"));
+		                  dto.setProNum(rs.getInt("proNum"));
+		                  dto.setQuantity(rs.getInt("quantity"));
+		                  dto.setOrderTotal(rs.getInt("orderTotal"));
+		                  dto.setId(rs.getString("id"));
+		                  dto.setReceiver(rs.getString("receiver"));
+		                  dto.setRecZipcode(rs.getString("recZipcode"));
+		                  dto.setRecAddress(rs.getString("recAddress"));
+		                  dto.setRecAddressDetail(rs.getString("recAddressDetail"));
+		                  dto.setRecPhone(rs.getString("recPhone"));
+		                  dto.setRecEmail(rs.getString("recEmail"));
+		                  dto.setDelCon(rs.getString("delCon"));
+		                  dto.setPayCon(rs.getString("payCon"));
+		                  dto.setReg(rs.getTimestamp("reg"));
+		                  dto.setProName(rs.getString("proName"));
+		                  dto.setThumbImg(rs.getString("thumbImg"));
+		                  myrefundList.add(dto);
+					} while(rs.next());
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				if(rs != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 			if(pstmt != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+	 			if(conn != null)try {rs.close();}catch(Exception e) {e.printStackTrace();}
+			}
+			return myrefundList;
+		}
 		
 		
 		

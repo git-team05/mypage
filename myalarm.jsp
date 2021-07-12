@@ -34,7 +34,7 @@
 	<div>
 		<tr>
 			<td colspan="2">
-				<jsp:include page="mylayoutTop.jsp"></jsp:include>
+				<jsp:include page="layoutTop.jsp"></jsp:include>
 			</td>
 		</tr>
 	</div>
